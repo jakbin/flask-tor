@@ -20,7 +20,12 @@ setup(
     ],
     keywords='flask, tor,onion',
     python_requires=">=3",
-    install_requires=['Flask>=0.14.0', 'requests'],
-    py_modules=['flask_tor'],
+    packages=['flask_tor'],
+    package_data={  
+        'flask_tor': [
+            'torrc_template',
+            'torrc_template-windows'
+        ]},
+    install_requires=['Flask','stem'],
     zip_safe=False,
 )
