@@ -12,10 +12,14 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     url="https://github.com/jakbin/flask-tor",
+    project_urls={
+    'Bug Tracker': 'https://github.com/jakbin/flask-tor/issues',
+    },
     license="MIT License",
     classifiers=[
+        'Development Status :: 4 - Beta',
         "Programming Language :: Python :: 3.6",
-        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     keywords='flask, tor,onion',
