@@ -1,5 +1,5 @@
 from .onion import *
-from .onionshare import OnionShare
+from .onionstart import OnionStart
 import sys, threading
 
 def run_with_tor():
