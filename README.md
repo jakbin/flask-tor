@@ -11,6 +11,10 @@ Run your flask website in tor using flask_tor.It doesn’t interfere with other 
 ### Disclaimer:-
 Use it only for educational purpose.
 
+## Features
+- No need root permission
+- Multiple instances
+
 ## Compatability
 Python 3.6+ is required.
 
