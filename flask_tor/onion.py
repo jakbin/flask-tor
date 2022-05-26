@@ -222,7 +222,7 @@ class Onion(object):
                 time.sleep(0.2)
 
                 # Timeout after 45 seconds
-                if time.time() - start_ts > 45:
+                if time.time() - start_ts > 55:
                     print("")
                     self.tor_proc.terminate()
                     raise BundledTorTimeout('settings_error_bundled_tor_timeout')
