@@ -15,6 +15,7 @@ class OnionStart(object):
         self.hidserv_dir = None
         self.onion_host = None
         self.stealth = None
+        self.local_only = local_only
 
     def start_onion_service(self):
         """
