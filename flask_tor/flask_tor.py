@@ -15,13 +15,13 @@ def run_with_tor():
 
     # Start the onionshare app
     try:
-        app_tor = OnionShare(onion)
+        app_tor = OnionStart(onion)
         # app_tor.set_stealth(stealth)
         app_tor.start_onion_service()
     except KeyboardInterrupt:
         print("")
         sys.exit()
 
-    print(f" * Running on {app_tor.onion_host}")
+    print(f" * Running on http://{app_tor.onion_host}")
     return app_tor.port
 
