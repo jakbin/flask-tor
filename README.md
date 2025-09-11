@@ -14,6 +14,7 @@ Use it only for educational purpose.
 ## Features
 - No need root permission
 - Multiple instances
+- Optional persistent onion address (reuse the same .onion between runs)
 
 ## Compatability
 Python 3.6+ is required.
@@ -34,7 +35,7 @@ from flask import Flask
 from flask_tor import run_with_tor
 
 app = Flask(__name__)
-port = run_with_tor()
+port = run_with_tor(persistent_key_file='~/.flask_tor/hidden_service_key')
 
 @app.route("/")
 def hello():
@@ -52,6 +53,8 @@ connecting_to_tor: 100% - Done
  * Serving Flask app "main"
  * Debug mode: off
  * Running on http://127.0.0.1:<port>/
+
+If you pass a persistent_key_file path, the first run will create a key file and subsequent runs will reuse it so the onion address stays the same. Set reuse_key=False to force a new address while still updating the stored key.
 ```
 
 ## Tutorial
