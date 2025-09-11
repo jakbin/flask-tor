@@ -105,9 +105,11 @@ class Onion(object):
     is necessary for status updates to reach the GUI.
     """
     def __init__(self):
-
         self.stealth = False
         self.service_id = None
+        # Private key (eg: 'ED25519-V3:AAAA....') captured from ADD_ONION so it can
+        # optionally be reused to get the same onion address in future runs.
+        self.private_key = None
 
         self.system = platform.system()
 
@@ -342,7 +344,7 @@ class Onion(object):
             # ephemeral stealth onion services are not supported
             self.supports_stealth = False
 
-    def start_onion_service(self, port):
+    def start_onion_service(self, port, existing_key=None):
         """
         Start a onion service on port 80, pointing to the given port, and
         return the onion hostname.
@@ -362,17 +364,38 @@ class Onion(object):
             basic_auth = None
 
         try:
-            if basic_auth != None :
-                res = self.c.create_ephemeral_hidden_service({ 80: port }, await_publication=True, basic_auth=basic_auth)
-            else :
-                # if the stem interface is older than 1.5.0, basic_auth isn't a valid keyword arg
-                res = self.c.create_ephemeral_hidden_service({ 80: port }, await_publication=True)
+            if existing_key:
+                # Re-create an onion service using a previously saved key
+                try:
+                    key_type, key_content = existing_key.split(':', 1)
+                except ValueError:
+                    raise TorErrorInvalidSetting('invalid_saved_private_key')
+                if basic_auth is not None:
+                    res = self.c.create_ephemeral_hidden_service({80: port}, key_type=key_type, key_content=key_content, await_publication=True, basic_auth=basic_auth)
+                else:
+                    res = self.c.create_ephemeral_hidden_service({80: port}, key_type=key_type, key_content=key_content, await_publication=True)
+            else:
+                if basic_auth is not None:
+                    res = self.c.create_ephemeral_hidden_service({ 80: port }, await_publication=True, basic_auth=basic_auth)
+                else:
+                    # if the stem interface is older than 1.5.0, basic_auth isn't a valid keyword arg
+                    res = self.c.create_ephemeral_hidden_service({ 80: port }, await_publication=True)
 
         except ProtocolError:
             raise TorErrorProtocolError('error_tor_protocol_error')
 
         self.service_id = res.content()[0][2].split('=')[1]
         onion_host = self.service_id + '.onion'
+
+        # Extract and store the private key if Tor returned it (Tor omits this
+        # line when we supplied our own existing key).
+        try:
+            for line in res.content():
+                if line[2].startswith('PrivateKey='):
+                    self.private_key = line[2].split('=',1)[1]
+                    break
+        except Exception:
+            pass
 
         if self.stealth:
             auth_cookie = res.content()[2][2].split('=')[1].split(':')[1]
